@@ -121,7 +121,7 @@ function generateTags(){
       }
   
       /* insert HTML of all the links into the tags wrapper */
-      document.querySelector(optArticleTagsSelector).innerHTML = html;
+      article.querySelector(optArticleTagsSelector).innerHTML = html;
 
     /* END LOOP: for every article: */
     }
