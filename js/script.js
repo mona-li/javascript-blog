@@ -330,6 +330,11 @@ function generateAuthor(){
   const optArticleAuthorSelector = '.post-author';
   const optArticleSelector = '.post';
   const articles = document.querySelectorAll(optArticleSelector);
+  const optAuthorsListSelector = '.authors';
+
+  /* make empty array for authors */
+  let authorsListArray = [];
+  let htmlList = '';
 
   /* START LOOP: for every article */
   for(let article of articles){
@@ -339,19 +344,54 @@ function generateAuthor(){
 
     /* make html variable with empty string */
     let htmlP = '';
-    
+    let htmlLi = '';
+
     /* get author from data-author attribute */
     const articleAuthor = article.getAttribute('data-author');
 
     /* generate author-link HTML for article */
     htmlP = 'by ' +  '<a href="#author-' + articleAuthor + '">' + articleAuthor + '</a>';
 
+    /* delarate iteration counter */
+    let articleId = 1;
+
+    //console.log('authorsListArray[articleId]:', authorsListArray[articleId]);
+    // console.log('articleAuthor:', articleAuthor);
+
+
+
+    //console.log('authorsListArray.indexOf(articleAuthor)', authorsListArray.indexOf(articleAuthor));
+
+    /* check authorsListArray content - for not duplicate authors-names links*/
+    if(authorsListArray.indexOf(articleAuthor) < 0){
+
+      /* add new author to array */
+      authorsListArray.push(articleAuthor);
+
+      //console.log('authorsListArray:', authorsListArray);
+      //console.log('articleAuthor:', articleAuthor);
+      //console.log('authorsListArray[articleId]:', authorsListArray[articleId]);
+
+      /* generate author-link HTML li for right side section */
+      htmlLi = '<li><a href="#author-' + articleAuthor + '">' + articleAuthor + '</a></li>';
+      /* generate author-link HTML list for right side section */
+      htmlList = htmlList + htmlLi;
+    }
+
+    /* increment counter */
+    articleId ++;
 
     /* insert HTML of author-name into the post-author wrapper */
     article.querySelector(optArticleAuthorSelector).innerHTML = htmlP;
+    //console.log('authorsListArray:', authorsListArray);
 
   /* END LOOP: for every article */
   }
+
+// console.log('authorsListArray after loop:', authorsListArray);
+
+/* insert HTML of author-names list into the authors wrapper */
+document.querySelector(optAuthorsListSelector).innerHTML = htmlList; 
 }
 
 generateAuthor();
