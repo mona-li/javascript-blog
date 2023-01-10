@@ -95,6 +95,32 @@ body {
   margin-right: 10px;
 }
 
+/* Tags cloud */
+.tags * {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.tag-size-1 a {
+  font-size: 80%;
+  color: #B74FE8;
+}
+.tag-size-2 a {
+  font-size: 95%;
+  color: #9452F2;
+}
+.tag-size-3 a {
+  font-size: 115%;
+  color: #6756DB;
+}
+.tag-size-4 a {
+  font-size: 130%;
+  color: #5268F2;
+}
+.tag-size-5 a {
+  font-size: 160%;
+  color: #4F8CE8;
+}
 /* Authors */
 
 .authors {
