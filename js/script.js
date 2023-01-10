@@ -353,7 +353,7 @@ function generateAuthor(){
     htmlP = 'by ' +  '<a href="#author-' + articleAuthor + '">' + articleAuthor + '</a>';
 
     /* delarate iteration counter */
-    let articleId = 1;
+    //let articleId = 1;
 
     //console.log('authorsListArray[articleId]:', authorsListArray[articleId]);
     // console.log('articleAuthor:', articleAuthor);
@@ -379,7 +379,7 @@ function generateAuthor(){
     }
 
     /* increment counter */
-    articleId ++;
+    //articleId ++;
 
     /* insert HTML of author-name into the post-author wrapper */
     article.querySelector(optArticleAuthorSelector).innerHTML = htmlP;
@@ -388,10 +388,10 @@ function generateAuthor(){
   /* END LOOP: for every article */
   }
 
-// console.log('authorsListArray after loop:', authorsListArray);
+  // console.log('authorsListArray after loop:', authorsListArray);
 
-/* insert HTML of author-names list into the authors wrapper */
-document.querySelector(optAuthorsListSelector).innerHTML = htmlList; 
+  /* insert HTML of author-names list into the authors wrapper */
+  document.querySelector(optAuthorsListSelector).innerHTML = htmlList; 
 }
 
 generateAuthor();
