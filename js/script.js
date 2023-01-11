@@ -1,5 +1,16 @@
 'use strict';
 
+/* Handlebars - HOMEWORK 6.4 */
+const templates = {
+  articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML),
+  tagLink: Handlebars.compile(document.querySelector('#template-tag-link').innerHTML),
+  authorLink: Handlebars.compile(document.querySelector('#template-author-link').innerHTML),
+  tagCloudLink: Handlebars.compile(document.querySelector('#template-tag-cloud-link').innerHTML),
+  authorListLink: Handlebars.compile(document.querySelector('#template-author-list-link').innerHTML),
+};
+
+/* end of definition Handlebars - HOMEWORK 6.4 */
+
 function titleClickHandler(event){
   event.preventDefault();
   const clickedElement = this;
@@ -59,7 +70,9 @@ function generateTitleLinks(customSelector = ''){
   for(let article of articles){
     const articleId = article.getAttribute('id');
     const articleTitle = article.querySelector(optTitleSelector).innerHTML;
-    const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
+    //const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
+    const linkHTMLData = {id: articleId, title: articleTitle};
+    const linkHTML = templates.articleLink(linkHTMLData);
     //console.log(linkHTML);
 
     /* get the article id */
@@ -91,7 +104,7 @@ function generateTitleLinks(customSelector = ''){
 generateTitleLinks();
 
 
-/* NOT COMPLETE JET <---------------------------------------------------------------------------------------------------- HOMEWORK 6.3. */
+/* HOMEWORK 6.3. <---------------------------------------------------------------------------------------------------- HOMEWORK 6.3. */
 function calculateTagsParams(tags){
 
   /* set start max, min values */
@@ -132,7 +145,7 @@ function calculateTagsParams(tags){
   /* return object with max and min values */
   return params;
 }
-/* END OF NOT COMPLETE CODE <----------------------------------------------------------------------------------------- END OF HOMEWORK 6.3. */
+/* END OF HOMEWORK 6.3. <----------------------------------------------------------------------------------------- END OF HOMEWORK 6.3. */
 
 function calculateTagClass(params, count){
 
@@ -145,6 +158,7 @@ function calculateTagClass(params, count){
   return classNumber;
 }
 
+/* HOMEWORK - Tags (tagLink, tagCloudLink) <------------------------------------------------------------------------------------------ code was changed for HOMEWORK 6.4 - 2), 4) */
 function generateTags(){
 
   /* [NEW] create a new variable allTags with an empty object */
@@ -157,7 +171,7 @@ function generateTags(){
   //console.log('articles:', articles);
 
   /* declarate class */
-  const optCloudClassPrefix = 'tag-size-';
+  // const optCloudClassPrefix = 'tag-size-'; <------------- for old way to display tag li
   
 
   /* START LOOP: for every article */
@@ -168,7 +182,6 @@ function generateTags(){
 
     /* make html variable with empty string */
     let html = '';
-    let linkHTML = '';
 
     /* get tags from data-tags attribute */
     const articleTags = article.getAttribute('data-tags');
@@ -180,7 +193,9 @@ function generateTags(){
     for(let tag of articleTagsArray){
 
       /* generate HTML of the link */
-      linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
+      const linkHTMLData = {id: tag, title: tag};
+      const linkHTML = templates.tagLink(linkHTMLData);
+      //linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>'; <----------- for old way to display tag li
 
       /* add generated code to html variable */
       html = html + linkHTML;
@@ -211,34 +226,48 @@ function generateTags(){
   //console.log('optCloudClassCount:', optCloudClassCount);
   
   /* [NEW] create variable for all links HTML code */
-  let allTagsHTML = '';
+  const allTagsData = {tags: []};
+  //let allTagsHTML = ''; <---------------------- for old way to display tag cloud
+
 
   /* [NEW] create variable for one link HTML code */
-  let linkTag = '';
+  //let linkTag = ''; <------------------------- for old way to display tag cloud
 
   /* [NEW] START LOOP: for each tag in allTags: */
   for (let tag in allTags) {
 
     /* [NEW] generate code of a link and add it to allTagsHTML */
-    linkTag = '<a href="#tag-' + tag + '">' + tag + '</a>';
+    //linkTag = '<a href="#tag-' + tag + '">' + tag + '</a>'; <-------- for old way to display tag cloud
 
     //console.log('allTags[tag]:', allTags[tag])
-    const count = allTags[tag];
+    //const count = allTags[tag]; <--------------------------- for old way to display tag cloud
     //console.log('count:', count);
     
-    const tagLinkHTML = '<li class=' + optCloudClassPrefix + calculateTagClass(tagsParams, count) + '>' + linkTag + '</li>';
+    //const tagLinkHTML = '<li class=' + optCloudClassPrefix + calculateTagClass(tagsParams, count) + '>' + linkTag + '</li>'; <------ for old way to display tag cloud
     //console.log('tagLinkHTML:', tagLinkHTML);
-    allTagsHTML += tagLinkHTML;
+
+    /* add tag object to array allTagsData.tags */
+    allTagsData.tags.push({
+      tag: tag,
+      count: allTags[tag],
+      className: calculateTagClass(tagsParams, allTags[tag])
+    });
+
+    // allTagsHTML += tagLinkHTML; <-------------- for old way to display tag cloud
 
   /* [NEW] END OF LOOP: for each tag in allTags: */
   }
   //console.log('optCloudClassCount:', optCloudClassCount);
 
-  /* [NEW] put code of a all links into right column */
-  tagList.innerHTML = allTagsHTML;
+  /* [NEW] put code of a all links into right column (by call function tagCloudLink in object teplates) */
+  tagList.innerHTML = templates.tagCloudLink(allTagsData);
+  console.log('allTagsData:', allTagsData);
+
+  //tagList.innerHTML = allTagsHTML; <------------ old way to display tag cloud
 }
   
 generateTags();
+/* END OF HOMEWORK - Tags (tagLink, tagCloudLink) <----------------------------------------------------------------------------------------------- END OF code was changed for HOMEWORK 6.4 - 2), 4) */
 
 function tagClickHandler(event){
   /* prevent default action for this event */
@@ -287,44 +316,7 @@ function addClickListenersToTags(){
 
 addClickListenersToTags();
 
-
-/* ASIDE LIST OF AUTHORS - not complete (authors are duplicated)  */
-
-/*function generateAsideAuthorsList(){
-  // find all articles *
-  const optArticleAuthorSelector = '.post-author';
-  const optArticleSelector = '.post';
-  const optAuthorsSelector = '.authors';
-  const articles = document.querySelectorAll(optArticleSelector);
-  let htmlAllAuthors = '';
-  // START LOOP: for every article: *
-  for(let article of articles){
-    // find author-post wrapper *
-    //console.log(optArticleAuthorSelector);
-
-    // make html variable with empty string *
-    let htmlP = '';
-    let htmlLi = '';
-    
-    // get author from data-author attribute
-    const articleAuthor = article.getAttribute('data-author');
-
-    htmlP = 'by ' +  '<a href="#author-' + articleAuthor + '">' + articleAuthor + '</a>';
-    htmlLi = '<li><a href="#author-' + articleAuthor + '">' + articleAuthor + '</a></li>';
-    htmlAllAuthors = htmlAllAuthors + htmlLi;
-    // insert HTML of author-name into the post-author wrapper
-    //article.querySelector(optArticleAuthorSelector).innerHTML = htmlP;
-  // END LOOP: for every article: 
-  }
-  // insert HTML of author-names list into the authors wrapper 
-  document.querySelector(optAuthorsSelector).innerHTML = htmlAllAuthors; 
-}
-
-generateAsideAuthorsList(); */
-/* END OF NOT COMPLETE CODE */
-
-
-/* HOMEWORK - Add author to article <------------------------------------------------------------------------------------------ HOMEWORK 6.2. */
+/* HOMEWORK - Add author to article <-------------------------------------------------------------------------------------------------- HOMEWORK 6.2. -> code was changed for HOMEWORK 6.4 3), 5)*/
 function generateAuthor(){
   /* find all articles */
   const optArticleAuthorSelector = '.post-author';
@@ -334,7 +326,9 @@ function generateAuthor(){
 
   /* make empty array for authors */
   let authorsListArray = [];
-  let htmlList = '';
+  //let htmlList = '';
+  const authorsListData = {articleAuthors: []};
+  let htmlLi = '';
 
   /* START LOOP: for every article */
   for(let article of articles){
@@ -343,58 +337,53 @@ function generateAuthor(){
     //console.log(optArticleAuthorSelector);
 
     /* make html variable with empty string */
-    let htmlP = '';
-    let htmlLi = '';
+    //let htmlLi = ''; <-- for old way to display author
+    //let htmlP = ''; <-- for old way to display author
 
     /* get author from data-author attribute */
     const articleAuthor = article.getAttribute('data-author');
 
+    /* inject data to linkHTMLData object */
+    const linkHTMLData = {id: articleAuthor, title: articleAuthor};
+
+    /* call function from object templates and assign result to variable */
+    const htmlP = templates.authorLink(linkHTMLData);
+
     /* generate author-link HTML for article */
-    htmlP = 'by ' +  '<a href="#author-' + articleAuthor + '">' + articleAuthor + '</a>';
-
-    /* delarate iteration counter */
-    //let articleId = 1;
-
-    //console.log('authorsListArray[articleId]:', authorsListArray[articleId]);
-    // console.log('articleAuthor:', articleAuthor);
-
-
-
-    //console.log('authorsListArray.indexOf(articleAuthor)', authorsListArray.indexOf(articleAuthor));
+    //htmlP = 'by ' +  '<a href="#author-' + articleAuthor + '">' + articleAuthor + '</a>'; <-- for old way to display author
 
     /* check authorsListArray content - for not duplicate authors-names links*/
     if(authorsListArray.indexOf(articleAuthor) < 0){
 
       /* add new author to array */
-      authorsListArray.push(articleAuthor);
+      authorsListArray.push(articleAuthor); //<--- for old way to display author-list, it is nessesary to check  for not duplicate authors-names links
 
-      //console.log('authorsListArray:', authorsListArray);
-      //console.log('articleAuthor:', articleAuthor);
-      //console.log('authorsListArray[articleId]:', authorsListArray[articleId]);
+      /* add articleAuthor to object authorsListData */
+      authorsListData.articleAuthors.push({
+        articleAuthor: articleAuthor
+      });
 
       /* generate author-link HTML li for right side section */
-      htmlLi = '<li><a href="#author-' + articleAuthor + '">' + articleAuthor + '</a></li>';
+      //htmlLi = '<li><a href="#author-' + articleAuthor + '">' + articleAuthor + '</a></li>'; <--- for old way to display author
       /* generate author-link HTML list for right side section */
-      htmlList = htmlList + htmlLi;
+      //htmlList = htmlList + htmlLi;
     }
-
-    /* increment counter */
-    //articleId ++;
 
     /* insert HTML of author-name into the post-author wrapper */
     article.querySelector(optArticleAuthorSelector).innerHTML = htmlP;
-    //console.log('authorsListArray:', authorsListArray);
 
   /* END LOOP: for every article */
   }
-
-  // console.log('authorsListArray after loop:', authorsListArray);
-
+  
+  /* call function from object templates and assign result to variable, calling is after loop which adds authors to object authorsListData */
+  htmlLi = templates.authorListLink(authorsListData);
   /* insert HTML of author-names list into the authors wrapper */
-  document.querySelector(optAuthorsListSelector).innerHTML = htmlList; 
+  document.querySelector(optAuthorsListSelector).innerHTML = htmlLi; 
 }
 
 generateAuthor();
+
+/* END OF changed code for HOMEWORK 6.4 <----------------------------------------------------------------------------------------------------------- END OF changed code for HOMEWORK 6.4 3), 5)*/
 
 function authorClickHandler(event){
 
@@ -459,4 +448,4 @@ function addClickListenersToAuthors(){
 
 addClickListenersToAuthors();
 
-/* END OF HOMEWORK <----------------------------------------------------------------------------------------------------------- END OF HOMEWORK 6.2. */
+/* END OF HOMEWORK <----------------------------------------------------------------------------------------------------------- END OF HOMEWORK 6.2. -> code was changed for HOMEWORK 6.4 */
